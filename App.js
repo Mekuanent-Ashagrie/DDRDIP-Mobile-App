@@ -108,13 +108,12 @@ export default function App() {
           <Row data={tableHead} style={styles.head} textStyle={styles.text}/>
           {            
             tableData.map((rowData, index) => (
-              <TableWrapper key={index} style={styles.row}>               
-                {                 
-                  rowData.map((cellData, cellIndex) => (                    
-                    <Cell key={cellIndex} data={cellIndex == 3 ? element(cellData, index) : cellData} textStyle={styles.text}/>
-                  ))
-                }
-              </TableWrapper>
+              <Row
+                      key={index}
+                      data={rowData}
+                      style={[styles.row, index%2 && {backgroundColor: '#F7F6E7'}]}
+                      textStyle={styles.text}
+                    />
             ))
           }
         </Table>
