@@ -25,51 +25,53 @@ class Capsules extends React.Component {
     capsuleList: []
   }
 
-  componentDidMount(){
-
-    //delete existing tables --- for test 
-  //   db.transaction(txn => {    
-  //     txn.executeSql(
-  //       'DROP TABLE Capsules',
-  //       )
-  //     }
-  //   )
-  //   db.transaction(txn => {    
-  //     txn.executeSql(
-  //       'DROP TABLE Capsule_launches',
-  //     )
-  //   }
-  // )
-
+  componentDidMount(){  
     //create capsules tables if not exist 
+        db.transaction(txn => {    
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS Capsules(reuse_count	INTEGER, water_landings	INTEGER, land_landings	INTEGER, last_update	TEXT, serial	TEXT, status	TEXT, type	TEXT, cid	TEXT PRIMARY KEY)',             
+          
+          )
+        }
+      )
+      
+      //create capsule_launches tables if not exist 
+      db.transaction(txn => {    
+        txn.executeSql(
+          'CREATE TABLE IF NOT EXISTS Capsule_launches(cid TEXT, launch	TEXT)',
+          )
+        }
+      )
+
+      // get data from capsules table
+      db.transaction((tx) => {
+          tx.executeSql(
+            'SELECT * FROM Capsules',
+          null,
+            (tx, results) => {
+              console.log("generated", results);
+              this.setState({capsuleList: results.rows._array})
+            }
+          );
+        });
+
+    }  
+
+  // delete tables if required --- for test 
+  deleteTbl = () => {
     db.transaction(txn => {    
       txn.executeSql(
-        'CREATE TABLE IF NOT EXISTS Capsules(reuse_count	INTEGER, water_landings	INTEGER, land_landings	INTEGER, last_update	TEXT, serial	TEXT, status	TEXT, type	TEXT, cid	TEXT PRIMARY KEY)',             
-       
+        'DROP TABLE Capsules',
+        )
+      }
+    )
+    db.transaction(txn => {    
+      txn.executeSql(
+        'DROP TABLE Capsule_launches',
       )
     }
   )
-  //create capsule_launches tables if not exist 
-  db.transaction(txn => {    
-    txn.executeSql(
-      'CREATE TABLE IF NOT EXISTS Capsule_launches(cid TEXT, launch	TEXT)',
-      )
-    }
-  )
-
-  // get data from capsules table
-  db.transaction((tx) => {
-      tx.executeSql(
-        'SELECT * FROM Capsules',
-       null,
-        (tx, results) => {
-          console.log("generated", results);
-          this.setState({capsuleList: results.rows._array})
-        }
-      );
-    });
-
-  }  
+  }
 
   renderCard = (props, index, navigation) => {
     return (
@@ -97,7 +99,8 @@ class Capsules extends React.Component {
       <Block safe flex> 
         <Button onPress={() => navigation.navigate("SpaceX")} style={styles.button}
                   color={argonTheme.COLORS.INFO}>Load More From SpaceX</Button>
-             
+        <Button onPress={this.deleteTbl()} style={styles.button}
+                  color={argonTheme.COLORS.WARNING}>Delete All - For Test</Button>     
         <ScrollView style={{ flex: 1 }}>
           {this.renderCards(navigation)}
         </ScrollView>

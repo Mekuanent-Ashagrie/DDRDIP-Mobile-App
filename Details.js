@@ -46,22 +46,25 @@ class Details extends React.Component {
      null,
       (tx, results) => {
         console.log("generated", results);
-        this.setState({launchList: results.rows._array[0]})
+        this.setState({launchList: results.rows._array})
       }
     );
   });
 
   }  
 
-  renderLaunches = () =>{      
-    this.state.launchList.map(lau=>{
+  renderLaunches = () => this.state.launchList.map((lau, index)=>{      
       return(
-        <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-          {lau.launch}
+        <Block flex>
+          <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+              {lau.launch}
         </Text>
+        </Block>
+        
       )
     })
-  }    
+   
+
   render() {
     
     return (
