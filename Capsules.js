@@ -25,40 +25,40 @@ class Capsules extends React.Component {
     capsuleList: []
   }
 
-  componentDidMount(){  
+  componentDidMount(){ 
+
     //create capsules tables if not exist 
-        db.transaction(txn => {    
-          txn.executeSql(
-            'CREATE TABLE IF NOT EXISTS Capsules(reuse_count	INTEGER, water_landings	INTEGER, land_landings	INTEGER, last_update	TEXT, serial	TEXT, status	TEXT, type	TEXT, cid	TEXT PRIMARY KEY)',             
-          
-          )
-        }
+    db.transaction(txn => {    
+      txn.executeSql(
+        'CREATE TABLE IF NOT EXISTS Capsules(reuse_count	INTEGER, water_landings	INTEGER, land_landings	INTEGER, last_update	TEXT, serial	TEXT, status	TEXT, type	TEXT, cid	TEXT PRIMARY KEY)',             
+       
       )
-      
-      //create capsule_launches tables if not exist 
-      db.transaction(txn => {    
-        txn.executeSql(
-          'CREATE TABLE IF NOT EXISTS Capsule_launches(cid TEXT, launch	TEXT)',
-          )
-        }
+    }
+  )
+  //create capsule_launches tables if not exist 
+  db.transaction(txn => {    
+    txn.executeSql(
+      'CREATE TABLE IF NOT EXISTS Capsule_launches(cid TEXT, launch	TEXT)',
       )
+    }
+  )
 
-      // get data from capsules table
-      db.transaction((tx) => {
-          tx.executeSql(
-            'SELECT * FROM Capsules',
-          null,
-            (tx, results) => {
-              console.log("generated", results);
-              this.setState({capsuleList: results.rows._array})
-            }
-          );
-        });
+  // get data from capsules table
+  db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM Capsules',
+       null,
+        (tx, results) => {
+          console.log("generated", results);
+          this.setState({capsuleList: results.rows._array})
+        }
+      );
+    });
 
-    }  
+  }  
 
-  // delete tables if required --- for test 
-  deleteTbl = () => {
+  //delete existing tables --- for test
+  deleteTb = () =>{       
     db.transaction(txn => {    
       txn.executeSql(
         'DROP TABLE Capsules',
@@ -98,9 +98,10 @@ class Capsules extends React.Component {
     return (
       <Block safe flex> 
         <Button onPress={() => navigation.navigate("SpaceX")} style={styles.button}
-                  color={argonTheme.COLORS.INFO}>Load More From SpaceX</Button>
-        <Button onPress={this.deleteTbl()} style={styles.button}
-                  color={argonTheme.COLORS.WARNING}>Delete All - For Test</Button>     
+                  color={argonTheme.COLORS.INFO}>Load From SpaceX</Button>
+        
+        <Button onPress={()=>{this.deleteTb(); navigation.navigate("Capsules")}} style={styles.button}
+                  color={argonTheme.COLORS.WARNING}>Delete All - Only For Test</Button>  
         <ScrollView style={{ flex: 1 }}>
           {this.renderCards(navigation)}
         </ScrollView>
